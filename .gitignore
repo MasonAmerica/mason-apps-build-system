@@ -2,6 +2,6 @@
 *.iml
 .gradle
 build
-!system-apps/src/main/kotlin/com/bymason/build
+!mason-apps/src/main/kotlin/com/bymason/build
 local.properties
 out

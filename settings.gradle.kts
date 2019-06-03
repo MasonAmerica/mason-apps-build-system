@@ -1,1 +1,1 @@
-include(":system-apps")
+include(":mason-apps")

@@ -1,10 +1,10 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
-    `java-gradle-plugin`
-    `kotlin-dsl`
-    `maven-publish`
     groovy
+    `java-gradle-plugin`
+    `maven-publish`
+    `kotlin-dsl`
 }
 
 dependencies {
@@ -30,15 +30,9 @@ tasks.withType<ValidateTaskProperties>().configureEach {
 group = "com.bymason.build"
 version = "1.0.0"
 
-val sourcesJar by tasks.registering(Jar::class) {
-    classifier = "sources"
-    from(sourceSets["main"].allSource)
-    dependsOn(tasks["classes"])
-}
-
-afterEvaluate {
-    publishing.publications.named<MavenPublication>("pluginMaven") {
-        artifactId = "mason-apps"
-        artifact(sourcesJar.get())
+gradlePlugin {
+    plugins.register("mason-apps") {
+        id = "mason-apps"
+        implementationClass = "com.bymason.build.masonapps.MasonAppsBuildPlugin"
     }
 }
