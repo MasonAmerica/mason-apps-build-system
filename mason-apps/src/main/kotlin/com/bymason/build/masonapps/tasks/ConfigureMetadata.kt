@@ -23,12 +23,17 @@ open class ConfigureMetadata @Inject constructor(
             val baseVersionName =
                     headTag?.name?.removePrefix("v")?.substringBeforeLast("-") ?: "1.0.0"
             val (major, minor, patch) = baseVersionName.split(".").map { it.toInt() }
+
+            val versionCode = extension.majorShift * major +
+                    extension.minorShift * minor +
+                    extension.patchShift * patch
+            val versionName = baseVersionName + "-" +
+                    if (isRelease) headCommit.abbreviatedId else "dev"
+
             variant.outputs.filterIsInstance<ApkVariantOutput>().forEach { output ->
-                output.versionCodeOverride = extension.majorShift * major +
-                        extension.minorShift * minor +
-                        extension.patchShift * patch
-                output.versionNameOverride = baseVersionName + "-" +
-                        if (isRelease) headCommit.abbreviatedId else "dev"
+                output.versionCodeOverride = versionCode
+                output.versionNameOverride = versionName
+                output.outputFileName = extension.appName + "-" + versionName + ".apk"
             }
         }
     }

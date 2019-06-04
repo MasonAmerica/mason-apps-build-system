@@ -6,6 +6,9 @@ open class MasonAppsExtension @JvmOverloads constructor(
         @get:Internal internal val name: String = "default" // Needed for Gradle
 ) {
     @get:Internal
+    var appName = "app"
+
+    @get:Internal
     var majorShift = 1
     @get:Internal
     var minorShift = 1
