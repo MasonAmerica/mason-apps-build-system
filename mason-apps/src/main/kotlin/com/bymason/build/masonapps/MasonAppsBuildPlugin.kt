@@ -15,11 +15,12 @@ import org.gradle.kotlin.dsl.withType
 class MasonAppsBuildPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.withType<AppPlugin> {
-            applyInternal(project, project.the())
+            applyInternal(project)
         }
     }
 
-    private fun applyInternal(project: Project, android: AppExtension) {
+    private fun applyInternal(project: Project) {
+        val android = project.the<AppExtension>()
         val mason = project.extensions.create<MasonAppsExtension>("masonApps")
 
         android.applicationVariants.configureEach {

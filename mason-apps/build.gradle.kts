@@ -1,38 +1,30 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
-
 plugins {
-    groovy
     `java-gradle-plugin`
-    `maven-publish`
     `kotlin-dsl`
 }
 
 dependencies {
-    compileOnly("com.android.tools.build:gradle:3.6.0-alpha02")
+    compileOnly("com.android.tools.build:gradle:3.6.0-beta03")
     implementation("org.ajoberstar.grgit:grgit-gradle:3.1.1")
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
-tasks.withType<KotlinJvmCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-    }
-}
-
-tasks.withType<ValidateTaskProperties>().configureEach {
-    enableStricterValidation = true
-    failOnWarning = true
+tasks.withType<ValidatePlugins>().configureEach {
+    enableStricterValidation.set(true)
 }
 
 group = "com.bymason.build"
 version = "1.0.0"
 
 gradlePlugin {
-    plugins.register("mason-apps") {
+    plugins.create("mason-apps") {
         id = "mason-apps"
         implementationClass = "com.bymason.build.masonapps.MasonAppsBuildPlugin"
     }
