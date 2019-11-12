@@ -15,11 +15,13 @@ open class ConfigureMetadata @Inject constructor(
 ) : DefaultTask() {
     @TaskAction
     fun configure() {
-        Grgit.open().use {
-            val headCommit = it.head()
-            val headTag = it.tag.list().orEmpty().sortedBy { it.commit.dateTime }.lastOrNull()
+        Grgit.open {
+            dir = project.rootDir
+        }.use { git ->
+            val headCommit = git.head()
+            val headTag = git.tag.list().orEmpty().maxBy { it.commit.dateTime }
 
-            val isRelease = headCommit.id == headTag?.commit?.id && it.status().isClean
+            val isRelease = headCommit.id == headTag?.commit?.id && git.status().isClean
             val baseVersionName =
                     headTag?.name?.removePrefix("v")?.substringBeforeLast("-") ?: "1.0.0"
             val (major, minor, patch) = baseVersionName.split(".").map { it.toInt() }
