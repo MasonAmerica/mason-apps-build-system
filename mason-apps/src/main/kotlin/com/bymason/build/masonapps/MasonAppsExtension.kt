@@ -9,9 +9,9 @@ open class MasonAppsExtension @JvmOverloads constructor(
     var appName = "app"
 
     @get:Internal
-    var majorShift = 1
+    var majorShift = 10_000
     @get:Internal
-    var minorShift = 1
+    var minorShift = 100
     @get:Internal
     var patchShift = 1
 }
