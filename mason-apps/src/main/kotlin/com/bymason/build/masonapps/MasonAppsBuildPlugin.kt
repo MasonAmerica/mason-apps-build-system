@@ -29,7 +29,7 @@ class MasonAppsBuildPlugin : Plugin<Project> {
                     mason,
                     this
             )
-            checkManifestProvider { dependsOn(configMetadata) }
+            preBuildProvider { dependsOn(configMetadata) }
         }
     }
 }
