@@ -24,11 +24,12 @@ open class ConfigureMetadata @Inject constructor(
             val isRelease = headCommit.id == headTag?.commit?.id && git.status().isClean
             val baseVersionName =
                     headTag?.name?.removePrefix("v")?.substringBeforeLast("-") ?: "1.0.0"
-            val (major, minor, patch) = baseVersionName.split(".").map { it.toInt() }
 
-            val versionCode = extension.majorShift * major +
-                    extension.minorShift * minor +
-                    extension.patchShift * patch
+            val versionCode = if (project.hasProperty("relBuild")) {
+                (System.currentTimeMillis() / 1000).toInt()
+            } else {
+                1
+            }
             val versionName = baseVersionName + "-" +
                     if (isRelease) headCommit.abbreviatedId else "dev"
 
