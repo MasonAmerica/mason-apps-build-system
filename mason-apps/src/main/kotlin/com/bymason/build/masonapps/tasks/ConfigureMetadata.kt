@@ -30,7 +30,7 @@ open class ConfigureMetadata @Inject constructor(
         val versionName = run {
             val output = ByteArrayOutputStream()
             execOps.exec {
-                commandLine("git", "describe", "--tags", "--dirty")
+                commandLine("git", "describe", "--tags", "--dirty", "--always")
                 standardOutput = output
             }
             output.toString().trim()
