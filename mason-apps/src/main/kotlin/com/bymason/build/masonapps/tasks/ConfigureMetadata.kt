@@ -18,20 +18,9 @@ open class ConfigureMetadata @Inject constructor(
         Grgit.open {
             dir = project.rootDir
         }.use { git ->
-            val headCommit = git.head()
-            val headTag = git.tag.list().orEmpty().maxBy { it.commit.dateTime }
-
-            val isRelease = headCommit.id == headTag?.commit?.id && git.status().isClean
-            val baseVersionName =
-                    headTag?.name?.removePrefix("v")?.substringBeforeLast("-") ?: "1.0.0"
-
-            val versionCode = if (System.getenv("CI") == null) {
-                1
-            } else {
-                (System.currentTimeMillis() / 1000).toInt()
-            }
-            val versionName = baseVersionName + "-" +
-                    if (isRelease) headCommit.abbreviatedId else "dev"
+            val versionCode = git.log().size
+            val tagName = git.describe { tags = true }
+            val versionName = if (git.status().isClean) tagName else "$tagName-dirty"
 
             variant.outputs.filterIsInstance<ApkVariantOutput>().forEach { output ->
                 output.versionCodeOverride = versionCode
