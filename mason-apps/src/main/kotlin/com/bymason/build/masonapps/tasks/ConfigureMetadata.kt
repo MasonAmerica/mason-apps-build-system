@@ -3,10 +3,12 @@ package com.bymason.build.masonapps.tasks
 import com.android.build.gradle.api.ApkVariantOutput
 import com.android.build.gradle.api.ApplicationVariant
 import com.bymason.build.masonapps.MasonAppsExtension
-import org.ajoberstar.grgit.Grgit
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.process.ExecOperations
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 open class ConfigureMetadata @Inject constructor(
@@ -15,18 +17,29 @@ open class ConfigureMetadata @Inject constructor(
 ) : DefaultTask() {
     @TaskAction
     fun configure() {
-        Grgit.open {
-            dir = project.rootDir
-        }.use { git ->
-            val versionCode = git.log().size
-            val tagName = git.describe { tags = true }
-            val versionName = if (git.status().isClean) tagName else "$tagName-dirty"
+        val execOps = project.serviceOf<ExecOperations>()
 
-            variant.outputs.filterIsInstance<ApkVariantOutput>().forEach { output ->
-                output.versionCodeOverride = versionCode
-                output.versionNameOverride = versionName
-                output.outputFileName = extension.appName + "-" + versionName + ".apk"
+        val versionCode = run {
+            val output = ByteArrayOutputStream()
+            execOps.exec {
+                commandLine("git", "rev-list", "--count", "HEAD")
+                standardOutput = output
             }
+            output.toString().trim().toInt()
+        }
+        val versionName = run {
+            val output = ByteArrayOutputStream()
+            execOps.exec {
+                commandLine("git", "describe", "--tags", "--dirty")
+                standardOutput = output
+            }
+            output.toString().trim()
+        }
+
+        variant.outputs.filterIsInstance<ApkVariantOutput>().forEach { output ->
+            output.versionCodeOverride = versionCode
+            output.versionNameOverride = versionName
+            output.outputFileName = extension.appName + "-" + versionName + ".apk"
         }
     }
 }

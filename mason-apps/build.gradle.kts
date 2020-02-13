@@ -4,8 +4,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly("com.android.tools.build:gradle:4.0.0-alpha08")
-    implementation("org.ajoberstar.grgit:grgit-gradle:4.0.1")
+    compileOnly("com.android.tools.build:gradle:4.0.0-alpha09")
 }
 
 java {
