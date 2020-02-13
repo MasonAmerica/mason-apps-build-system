@@ -25,10 +25,10 @@ open class ConfigureMetadata @Inject constructor(
             val baseVersionName =
                     headTag?.name?.removePrefix("v")?.substringBeforeLast("-") ?: "1.0.0"
 
-            val versionCode = if (project.hasProperty("relBuild")) {
-                (System.currentTimeMillis() / 1000).toInt()
-            } else {
+            val versionCode = if (System.getenv("CI") == null) {
                 1
+            } else {
+                (System.currentTimeMillis() / 1000).toInt()
             }
             val versionName = baseVersionName + "-" +
                     if (isRelease) headCommit.abbreviatedId else "dev"
